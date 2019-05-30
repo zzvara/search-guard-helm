@@ -77,4 +77,23 @@ entries:
     urls:
     - https://floragunncom.github.io/search-guard-helm/sg-helm-5.6.14-19.2-7.0-beta3.tgz
     version: 5.6.14-19.2-7.0-beta3
-generated: 2019-01-14T09:05:32.522396+01:00
+  - apiVersion: v1
+    created: "2019-05-30T11:27:00.147844+02:00"
+    description: Search Guard secured Elasticsearch
+    digest: a1cc3874294439cd17fcaa1952e2ff9ccfe0bb5a7fa095ab41dc4228e58e7284
+    home: https://search-guard.com/
+    icon: https://search-guard.com/wp-content/uploads/2018/01/sg_logo.png
+    maintainers:
+    - email: info@search-guard.com
+      name: floragunn GmbH
+    name: sg-helm
+    sources:
+    - https://github.com/lalamove/helm-elasticsearch
+    - https://www.elastic.co/products/elasticsearch
+    - https://github.com/pires/kubernetes-elasticsearch-cluster
+    - https://github.com/kubernetes/charts/tree/master/incubator/elasticsearch
+    - https://github.com/clockworksoul/helm-elasticsearch
+    urls:
+    - https://floragunncom.github.io/search-guard-helm/sg-helm-sgh-beta4.tgz
+    version: sgh-beta4
+generated: "2019-05-30T11:27:00.143387+02:00"
