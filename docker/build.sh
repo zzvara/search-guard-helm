@@ -5,45 +5,27 @@ PUSH="$1"
 docker system prune
 
 versions=(
-    #"ELK_VERSION=6.4.3 SG_VERSION=24.0 SG_KIBANA_VERSION=16"
-    #"ELK_VERSION=6.5.1 SG_VERSION=24.1 SG_KIBANA_VERSION=18"
-    #"ELK_VERSION=6.5.2 SG_VERSION=24.2 SG_KIBANA_VERSION=18"
-    #"ELK_VERSION=6.5.3 SG_VERSION=24.3 SG_KIBANA_VERSION=18"
-    #"ELK_VERSION=6.5.4 SG_VERSION=25.0 SG_KIBANA_VERSION=18.3"
-    #"ELK_VERSION=6.6.2 SG_VERSION=25.1 SG_KIBANA_VERSION=18.3"
-    #"ELK_VERSION=6.7.0 SG_VERSION=24.3 SG_KIBANA_VERSION=18.3"
-    #"ELK_VERSION=6.7.1 SG_VERSION=25.0 SG_KIBANA_VERSION=18.3"
-    #"ELK_VERSION=6.7.2 SG_VERSION=25.1 SG_KIBANA_VERSION=18.3"
-    "ELK_VERSION=6.8.0 SG_VERSION=25.1 SG_KIBANA_VERSION=18.3"
-    "ELK_VERSION=7.0.1 SG_VERSION=35.0.0 SG_KIBANA_VERSION=35.0.0"
-    "ELK_VERSION=7.1.0 SG_VERSION=35.0.0 SG_KIBANA_VERSION=35.0.0"
+    "ELK_VERSION=7.5.1 SG_VERSION=40.0.0 SG_KIBANA_VERSION=40.0.0"
 )
 
 ######################################################################################
 
 function push_docker {
+    export DOCKER_ID_USER="zzvara"
+    RET="1"
 
-    if [ "$PUSH" == "push" ]; then
-        export DOCKER_ID_USER="floragunncom"
-        RET="1"
-        
-        while [ "$RET" -ne 0 ]; do
-            echo "$DOCKER_HUB_PWD" | docker login --username "$DOCKER_ID_USER" --password-stdin
-            echo "Pushing $1"
-            docker push "$1" > /dev/null
-            RET="$?"
-            echo "Return code: $RET"
-            echo ""
+    while [ "$RET" -ne 0 ]; do
+        echo "$DOCKER_HUB_PWD" | docker login --username "$DOCKER_ID_USER" --password-stdin
+        echo "Pushing $1"
+        docker push "$1" > /dev/null
+        RET="$?"
+        echo "Return code: $RET"
+        echo ""
 
-            if [ "$RET" -ne 0 ]; then
-                sleep 15
-            fi
-        
-        done
-
-    else 
-        echo "Push disabled for $1"
-    fi
+        if [ "$RET" -ne 0 ]; then
+            sleep 15
+        fi
+    done
 }
 
 check_and_push() {
@@ -71,45 +53,45 @@ do
     LASTCMDSEC="0"
     
     cd "$DIR/elasticsearch"
-    echo "Build image floragunncom/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION"
-    docker build -t "floragunncom/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION" --pull $CACHE --build-arg ELK_VERSION="$ELK_VERSION" --build-arg ELK_FLAVOUR="$ELK_FLAVOUR" --build-arg SG_VERSION="$SG_VERSION" . > /dev/null
+    echo "Build image zzvara/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION"
+    docker build -t "zzvara/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION" --pull $CACHE --build-arg ELK_VERSION="$ELK_VERSION" --build-arg ELK_FLAVOUR="$ELK_FLAVOUR" --build-arg SG_VERSION="$SG_VERSION" . > /dev/null
     echo "$(( SECONDS - LASTCMDSEC )) sec"
     echo ""
-    check_and_push "floragunncom/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION"
+    check_and_push "zzvara/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION"
     LASTCMDSEC="$SECONDS"
 
     cd "$DIR/kibana"
-    echo "Build image floragunncom/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION"
-    docker build -t "floragunncom/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION" --pull $CACHE --build-arg ELK_VERSION="$ELK_VERSION" --build-arg ELK_FLAVOUR="$ELK_FLAVOUR" --build-arg SG_KIBANA_VERSION="$SG_KIBANA_VERSION"  .
+    echo "Build image zzvara/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION"
+    docker build -t "zzvara/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION" --pull $CACHE --build-arg ELK_VERSION="$ELK_VERSION" --build-arg ELK_FLAVOUR="$ELK_FLAVOUR" --build-arg SG_KIBANA_VERSION="$SG_KIBANA_VERSION"  .
     echo "$(( SECONDS - LASTCMDSEC )) sec"
     echo ""
-    check_and_push "floragunncom/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION"
+    check_and_push "zzvara/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION"
     LASTCMDSEC="$SECONDS"
 
     ELK_FLAVOUR=""
 
     cd "$DIR/elasticsearch"
-    echo "Build image floragunncom/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION"
-    docker build -t "floragunncom/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION" --pull $CACHE --build-arg ELK_VERSION="$ELK_VERSION" --build-arg ELK_FLAVOUR="$ELK_FLAVOUR" --build-arg SG_VERSION="$SG_VERSION" . > /dev/null
+    echo "Build image zzvara/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION"
+    docker build -t "zzvara/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION" --pull $CACHE --build-arg ELK_VERSION="$ELK_VERSION" --build-arg ELK_FLAVOUR="$ELK_FLAVOUR" --build-arg SG_VERSION="$SG_VERSION" . > /dev/null
     echo "$(( SECONDS - LASTCMDSEC )) sec"
     echo ""
-    check_and_push "floragunncom/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION"
+    check_and_push "zzvara/sg-elasticsearch:$ELK_VERSION$ELK_FLAVOUR-$SG_VERSION"
     LASTCMDSEC="$SECONDS"
 
     cd "$DIR/kibana"
-    echo "Build image floragunncom/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION"
-    docker build -t "floragunncom/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION" --pull $CACHE --build-arg ELK_VERSION="$ELK_VERSION" --build-arg ELK_FLAVOUR="$ELK_FLAVOUR" --build-arg SG_KIBANA_VERSION="$SG_KIBANA_VERSION"  .
+    echo "Build image zzvara/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION"
+    docker build -t "zzvara/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION" --pull $CACHE --build-arg ELK_VERSION="$ELK_VERSION" --build-arg ELK_FLAVOUR="$ELK_FLAVOUR" --build-arg SG_KIBANA_VERSION="$SG_KIBANA_VERSION"  .
     echo "$(( SECONDS - LASTCMDSEC )) sec"
     echo ""
-    check_and_push "floragunncom/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION"
+    check_and_push "zzvara/sg-kibana:$ELK_VERSION$ELK_FLAVOUR-$SG_KIBANA_VERSION"
     LASTCMDSEC="$SECONDS"
 
     cd "$DIR/sgadmin"
-    echo "Build image floragunncom/sg-sgadmin:$ELK_VERSION-$SG_VERSION"
-    docker build -t "floragunncom/sg-sgadmin:$ELK_VERSION-$SG_VERSION" --pull $CACHE --build-arg ELK_VERSION="$ELK_VERSION" --build-arg SG_VERSION="$SG_VERSION" . > /dev/null
+    echo "Build image zzvara/sg-sgadmin:$ELK_VERSION-$SG_VERSION"
+    docker build -t "zzvara/sg-sgadmin:$ELK_VERSION-$SG_VERSION" --pull $CACHE --build-arg ELK_VERSION="$ELK_VERSION" --build-arg SG_VERSION="$SG_VERSION" . > /dev/null
     echo "$(( SECONDS - LASTCMDSEC )) sec"
     echo ""
-    check_and_push "floragunncom/sg-sgadmin:$ELK_VERSION-$SG_VERSION"
+    check_and_push "zzvara/sg-sgadmin:$ELK_VERSION-$SG_VERSION"
     LASTCMDSEC="$SECONDS"
 done
 

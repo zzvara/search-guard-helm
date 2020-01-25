@@ -12,7 +12,7 @@ ARG ELK_FLAVOUR
 
 RUN echo $ELK_VERSION | cut -c1-1 > /major
 ENV SG_FULLVERSION=${ELK_VERSION}-${SG_VERSION}
-RUN elasticsearch-plugin install --batch com.floragunn:search-guard-$(cat /major):${SG_FULLVERSION} \
+RUN elasticsearch-plugin install --batch https://releases.floragunn.com/search-guard-7/$SG_FULLVERSION/search-guard-7-$SG_FULLVERSION.zip \
     && chmod +x plugins/search-guard-$(cat /major)/tools/*.sh
 
 RUN plugins/search-guard-$(cat /major)/tools/install_demo_configuration.sh -yic
